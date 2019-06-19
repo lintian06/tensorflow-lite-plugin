@@ -1,0 +1,115 @@
+# Description:
+# TensorBoard plugin for TF Lite.
+package(default_visibility = ["//visibility:public"])
+
+licenses(["notice"])  # Apache 2.0
+
+load("@org_tensorflow_tensorboard//tensorboard/defs:protos.bzl", "tb_proto_library")
+
+package_group(
+    name = "internal",
+    packages = ["//plugin/..."],
+)
+
+py_library(
+    name = "lite_backend",
+    srcs = ["lite_backend.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        "@org_tensorflow_tensorboard//tensorboard:expect_tensorflow_installed",
+        "@org_pythonhosted_six",
+    ],
+)
+
+py_library(
+    name = "lite_plugin",
+    srcs = ["lite_plugin.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":lite_backend",
+        "@org_tensorflow_tensorboard//tensorboard:plugin_util",
+        "@org_tensorflow_tensorboard//tensorboard/backend:http_util",
+        "@org_tensorflow_tensorboard//tensorboard/backend/event_processing:event_accumulator",
+        "@org_tensorflow_tensorboard//tensorboard/plugins:base_plugin",
+        "@org_pocoo_werkzeug",
+    ],
+)
+
+
+py_library(
+    name = "lite_plugin_loader",
+    srcs = ["lite_plugin_loader.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":lite_backend",
+        ":lite_plugin",
+        "@org_tensorflow_tensorboard//tensorboard/plugins:base_plugin",
+    ],
+)
+
+py_test(
+    name = "lite_backend_test",
+    size = "medium",  # tf integration test
+    srcs = ["lite_backend_test.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":lite_backend",
+        ":lite_demo_model",
+        "@org_tensorflow_tensorboard//tensorboard:expect_tensorflow_installed",
+    ],
+)
+
+py_test(
+    name = "lite_plugin_test",
+    size = "medium",  # tf integration test
+    srcs = ["lite_plugin_test.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":lite_backend",
+        ":lite_demo_model",
+        ":lite_plugin",
+        ":lite_plugin_loader",
+        "@org_tensorflow_tensorboard//tensorboard:expect_tensorflow_installed",
+        "@org_tensorflow_tensorboard//tensorboard/backend:application",
+        "@org_tensorflow_tensorboard//tensorboard/plugins:base_plugin",
+        "@org_pocoo_werkzeug",
+    ],
+)
+
+py_test(
+    name = "lite_plugin_loader_test",
+    size = "small",  # tf integration test
+    srcs = ["lite_plugin_loader_test.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":lite_backend",
+        ":lite_plugin",
+        ":lite_plugin_loader",
+        "@org_tensorflow_tensorboard//tensorboard:expect_tensorflow_installed",
+        "@org_tensorflow_tensorboard//tensorboard/backend:application",
+        "@org_tensorflow_tensorboard//tensorboard/plugins:base_plugin",
+    ],
+)
+
+
+py_binary(
+    name = "lite_demo",
+    srcs = ["lite_demo.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":lite_demo_model",
+        "@org_tensorflow_tensorboard//tensorboard:expect_absl_app_installed",
+        "@org_tensorflow_tensorboard//tensorboard:expect_absl_flags_installed",
+        "@org_tensorflow_tensorboard//tensorboard:expect_tensorflow_installed",
+    ],
+)
+
+py_library(
+    name = "lite_demo_model",
+    srcs = ["lite_demo_model.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        "@org_tensorflow_tensorboard//tensorboard:expect_numpy_installed",
+        "@org_tensorflow_tensorboard//tensorboard:expect_tensorflow_installed",
+    ],
+)
