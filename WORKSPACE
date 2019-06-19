@@ -65,46 +65,30 @@ http_archive(
 load("@org_tensorflow//tensorflow:workspace.bzl", "tf_workspace")
 tf_workspace()
 
-#http_archive(
-#    name = "org_tensorflow_tensorboard",
-#    sha256 = "5d04f587e4597b555f144dc128ddd5a0d8d1b26065d24dddc2b36ac82d9a85dd",
-#    strip_prefix = "tensorboard-8de790143b2cb787a8b0f1168cb0dd8d64eb8dcf",
-#    urls = [
-#        "https://mirror.bazel.build/github.com/tensorflow/tensorboard/archive/8de790143b2cb787a8b0f1168cb0dd8d64eb8dcf.tar.gz",
-#        "https://github.com/tensorflow/tensorboard/archive/8de790143b2cb787a8b0f1168cb0dd8d64eb8dcf.tar.gz",  # 2019-01-13
-#    ],
-#)
+"""
+http_archive(
+   name = "org_tensorflow_tensorboard",
+    sha256 = "1e79a1cfe64cb569f71319d4ecf3594d4d7db815ecbfc772a3534c5a13ff4af2",
+    strip_prefix = "tensorboard-af7b9874d55257a7b7261aea1501396c6ca6259a",
+    urls = [
+        "https://github.com/lintian06/tensorboard/archive/af7b9874d55257a7b7261aea1501396c6ca6259a.tar.gz",  # 2019-06-17
+    ],
+)
 
-#http_archive(
-#    name = "org_tensorflow_tensorboard",
-#    sha256 = "1e79a1cfe64cb569f71319d4ecf3594d4d7db815ecbfc772a3534c5a13ff4af2",
-#    strip_prefix = "tensorboard-78db135e980fff6852cd91f3da439b45e7f9fc1e",
-#    urls = [
-#        "https://github.com/tensorflow/tensorboard/archive/78db135e980fff6852cd91f3da439b45e7f9fc1e.tar.gz",  # 2019-05-14
-#    ],
-#)
-
-#http_archive(
-#    name = "org_tensorflow_tensorboard",
-    # sha256 = "1e79a1cfe64cb569f71319d4ecf3594d4d7db815ecbfc772a3534c5a13ff4af2",
-#    strip_prefix = "tensorboard-af7b9874d55257a7b7261aea1501396c6ca6259a",
-#    urls = [
-#        "https://github.com/lintian06/tensorboard/archive/af7b9874d55257a7b7261aea1501396c6ca6259a.tar.gz",  # 2019-06-17
-#    ],
-#)
+local_repository(
+    name = "org_tensorflow_tensorboard",
+    path = "/usr/local/google/home/tianlin/tensorboard/tian_board_for_lite_plugin",
+)
+"""
 
 http_archive(
-    name = "org_tensorflow_tensorboard_old",
+    name = "org_tensorflow_tensorboard",
     strip_prefix = "tensorboard-lite_plugin_fix_dep2",
     urls = [
         "https://github.com/lintian06/tensorboard/archive/lite_plugin_fix_dep2.zip",  # Dev version.
     ],
 )
 
-git_repository(
-    name = "org_tensorflow_tensorboard",
-    remote = "https://github.com/lintian06/tensorboard",
-)
 
 
 load("@org_tensorflow_tensorboard//third_party:workspace.bzl", "tensorboard_workspace")

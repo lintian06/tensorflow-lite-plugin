@@ -88,6 +88,9 @@ class LitePluginTest(tf.test.TestCase):
     self.assertIsInstance(self.routes['/list_saved_models'], collections.Callable)
     self.assertIsInstance(self.routes['/convert'], collections.Callable)
     self.assertIsInstance(self.routes['/script'], collections.Callable)
+    self.assertIsInstance(self.routes['/tf-lite-common.html'], collections.Callable)
+    self.assertIsInstance(self.routes['/tf-lite-controls.html'], collections.Callable)
+    self.assertIsInstance(self.routes['/tf-lite-dashboard.html'], collections.Callable)
 
   def test_convert_pass(self):
     if not lite_backend.is_supported:
@@ -131,6 +134,21 @@ class LitePluginTest(tf.test.TestCase):
     result = self._DeserializeResponse(response.get_data())
     self.assertEqual(result.get('result'), 'failed')
     self.assertIsNotNone(result.get('tabs'))
+
+  def test_assets(self):
+    if not lite_backend.is_supported:
+      return  # Test conditionally.
+    response = self.server.get(
+      '/data/plugin/lite/tf-lite-dashboard.html')
+    self.assertTrue(response.get_data())  # Not empty string.
+
+    response = self.server.get(
+      '/data/plugin/lite/tf-lite-controls.html')
+    self.assertTrue(response.get_data())  # Not empty string.
+
+    response = self.server.get(
+      '/data/plugin/lite/tf-lite-common.html')
+    self.assertTrue(response.get_data())  # Not empty string.
 
 
 if __name__ == '__main__':

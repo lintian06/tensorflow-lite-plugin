@@ -1,6 +1,6 @@
 # Description:
 # TensorBoard plugin for TF Lite.
-package(default_visibility = ["//visibility:public"])
+package(default_visibility = [":internal"])
 
 licenses(["notice"])  # Apache 2.0
 
@@ -8,7 +8,7 @@ load("@org_tensorflow_tensorboard//tensorboard/defs:protos.bzl", "tb_proto_libra
 
 package_group(
     name = "internal",
-    packages = ["//plugin/..."],
+    packages = ["//tensorboard_lite_plugin/..."],
 )
 
 py_library(
@@ -32,6 +32,9 @@ py_library(
         "@org_tensorflow_tensorboard//tensorboard/backend/event_processing:event_accumulator",
         "@org_tensorflow_tensorboard//tensorboard/plugins:base_plugin",
         "@org_pocoo_werkzeug",
+    ],
+    data = [
+        "//tensorboard_lite_plugin/tf_lite_dashboard",
     ],
 )
 

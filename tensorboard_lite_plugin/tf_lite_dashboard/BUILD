@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-package(default_visibility = ["@org_tensorflow_tensorboard//tensorboard:internal"])
+package(default_visibility = ["//tensorboard_lite_plugin:internal"])
 
 load("@org_tensorflow_tensorboard//tensorboard/defs:web.bzl", "tf_web_library")
 
@@ -36,7 +36,7 @@ tf_web_library(
     srcs = ["tf-lite-controls.html"],
     path = "/tf-lite-controls",
     deps = [
-        "//tensorboard_lite_plugin/tf_lite_common",
+        ":tf_lite_common",
         "@org_tensorflow_tensorboard//tensorboard/components/tf_imports:polymer",
         "@org_polymer_iron_pages",
         "@org_polymer_paper_button",
@@ -47,7 +47,7 @@ tf_web_library(
         "@org_polymer_paper_listbox",
         "@org_polymer_paper_radio_group",
         "@org_polymer_paper_tooltip",
-        "@org_polymer_paper_tabs"
+        "@org_polymer_paper_tabs",
     ],
 )
 
@@ -60,12 +60,12 @@ tf_web_library(
     deps = [
         ":tf_lite_common",
         ":tf_lite_controls",
-        "//tensorboard/components/tf_backend",
-        "//tensorboard/components/tf_dashboard_common",
-        "//tensorboard/components/tf_imports:polymer",
-        "//tensorboard/components/tf_tensorboard:registry",
-        "//tensorboard/components/tf_imports:webcomponentsjs",
-        "//tensorboard/plugins/graph/tf_graph_board",
-        "//tensorboard/plugins/graph/tf_graph_loader",
+        "@org_tensorflow_tensorboard//tensorboard/components/tf_backend",
+        "@org_tensorflow_tensorboard//tensorboard/components/tf_dashboard_common",
+        "@org_tensorflow_tensorboard//tensorboard/components/tf_imports:polymer",
+        "@org_tensorflow_tensorboard//tensorboard/components/tf_tensorboard:registry",
+        "@org_tensorflow_tensorboard//tensorboard/components/tf_imports:webcomponentsjs",
+        "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph_board",
+        "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph_loader",
     ],
 )

@@ -17,7 +17,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import functools
 import json
+import mimetypes
 import os
 
 from werkzeug import wrappers
@@ -57,7 +59,13 @@ class LitePlugin(base_plugin.TBPlugin):
         '/list_supported_ops': self.list_supported_ops,
         '/list_saved_models': self.list_saved_models,
         '/convert': self.convert,
-        '/script': self.script
+        '/script': self.script,
+        '/tf-lite-common.html': functools.partial(self._serve_file,
+            os.path.join('tf_lite_dashboard', 'tf-lite-common.html')),
+        '/tf-lite-controls.html': functools.partial(self._serve_file,
+            os.path.join('tf_lite_dashboard', 'tf-lite-controls.html')),
+        '/tf-lite-dashboard.html': functools.partial(self._serve_file,
+            os.path.join('tf_lite_dashboard', 'tf-lite-dashboard.html')),
     }
 
   def is_active(self):
@@ -179,3 +187,11 @@ class LitePlugin(base_plugin.TBPlugin):
   def list_supported_ops(self, request):
     supported_ops = lite_backend.get_potentially_supported_ops()
     return http_util.Respond(request, supported_ops, 'application/json')
+
+  @wrappers.Request.application
+  def _serve_file(self, file_path, request):
+    """Returns a resource file."""
+    res_path = os.path.join(os.path.dirname(__file__), file_path)
+    with open(res_path, 'rb') as read_file:
+      mimetype = mimetypes.guess_type(file_path)[0]
+      return http_util.Respond(request, read_file.read(), content_type=mimetype)

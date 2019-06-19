@@ -1,3 +1,5 @@
 include tensorboard_lite_plugin/tf_lite_common/*
 include tensorboard_lite_plugin/tf_lite_controls/*
 include tensorboard_lite_plugin/tf_lite_dashboard/*
+include LICENSE
+include README.md

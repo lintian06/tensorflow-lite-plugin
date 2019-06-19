@@ -24,6 +24,13 @@ setuptools.setup(
             "lite_plugin=tensorboard_lite_plugin.lite_plugin:LitePlugin",
         ],
     },
+    package_data={
+        "tensorboard_lite_plugin": [
+            "tf_lite_dashboard/tf-lite-common.html",
+            "tf_lite_dashboard/tf-lite-controls.html",
+            "tf_lite_dashboard/tf-lite-dashboard.html",
+        ],
+    },
     install_requires=REQUIRED_PACKAGES,
     classifiers=[
         "Programming Language :: Python :: 2",
