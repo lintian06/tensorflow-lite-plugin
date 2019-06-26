@@ -65,21 +65,6 @@ http_archive(
 load("@org_tensorflow//tensorflow:workspace.bzl", "tf_workspace")
 tf_workspace()
 
-"""
-http_archive(
-   name = "org_tensorflow_tensorboard",
-    sha256 = "1e79a1cfe64cb569f71319d4ecf3594d4d7db815ecbfc772a3534c5a13ff4af2",
-    strip_prefix = "tensorboard-af7b9874d55257a7b7261aea1501396c6ca6259a",
-    urls = [
-        "https://github.com/lintian06/tensorboard/archive/af7b9874d55257a7b7261aea1501396c6ca6259a.tar.gz",  # 2019-06-17
-    ],
-)
-
-local_repository(
-    name = "org_tensorflow_tensorboard",
-    path = "/usr/local/google/home/tianlin/tensorboard/tian_board_for_lite_plugin",
-)
-"""
 
 http_archive(
     name = "org_tensorflow_tensorboard",
