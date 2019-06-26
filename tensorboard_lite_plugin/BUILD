@@ -34,7 +34,7 @@ py_library(
         "@org_pocoo_werkzeug",
     ],
     data = [
-        "//tensorboard_lite_plugin/tf_lite_dashboard",
+        "//tensorboard_lite_plugin/lite_dashboard:assets",
     ],
 )
 

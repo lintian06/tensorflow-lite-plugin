@@ -83,12 +83,12 @@ local_repository(
 
 http_archive(
     name = "org_tensorflow_tensorboard",
+    # sha256 = "ca4dff20a9ffbb6277f28087aadc8398cddba8f0f95ff2ce2b61d319a0253632",
     strip_prefix = "tensorboard-lite_plugin_fix_dep2",
     urls = [
         "https://github.com/lintian06/tensorboard/archive/lite_plugin_fix_dep2.zip",  # Dev version.
     ],
 )
-
 
 
 load("@org_tensorflow_tensorboard//third_party:workspace.bzl", "tensorboard_workspace")

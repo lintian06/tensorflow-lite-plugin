@@ -82,15 +82,15 @@ class LitePluginTest(tf.test.TestCase):
       return  # Test conditionally.
     # The set up for this test generates relevant data.
     self.assertTrue(self.plugin.is_active())
+    self.assertTrue(self.plugin.plugin_name, lite_plugin.PLUGIN_PREFIX_ROUTE)
 
   def test_routes_provided(self):
     self.assertIsInstance(self.routes['/list_supported_ops'], collections.Callable)
     self.assertIsInstance(self.routes['/list_saved_models'], collections.Callable)
     self.assertIsInstance(self.routes['/convert'], collections.Callable)
     self.assertIsInstance(self.routes['/script'], collections.Callable)
-    self.assertIsInstance(self.routes['/tf-lite-common.html'], collections.Callable)
-    self.assertIsInstance(self.routes['/tf-lite-controls.html'], collections.Callable)
-    self.assertIsInstance(self.routes['/tf-lite-dashboard.html'], collections.Callable)
+    self.assertIsInstance(self.routes['/index.html'], collections.Callable)
+    self.assertIsInstance(self.routes['/index.js'], collections.Callable)
 
   def test_convert_pass(self):
     if not lite_backend.is_supported:
@@ -139,17 +139,19 @@ class LitePluginTest(tf.test.TestCase):
     if not lite_backend.is_supported:
       return  # Test conditionally.
     response = self.server.get(
-      '/data/plugin/lite/tf-lite-dashboard.html')
+      '/data/plugin/lite/index.html')
     self.assertTrue(response.get_data())  # Not empty string.
 
     response = self.server.get(
-      '/data/plugin/lite/tf-lite-controls.html')
+      '/data/plugin/lite/index.js')
     self.assertTrue(response.get_data())  # Not empty string.
 
-    response = self.server.get(
-      '/data/plugin/lite/tf-lite-common.html')
-    self.assertTrue(response.get_data())  # Not empty string.
-
+  def test_frontend(self):
+    meta = self.plugin.frontend_metadata()
+    print(meta)
+    self.assertEqual(meta.tab_name, lite_plugin.TAB_NAME)
+    self.assertEqual(meta.es_module_path, '/index.js')
+    
 
 if __name__ == '__main__':
   tf.test.main()

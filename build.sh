@@ -1,5 +1,13 @@
-echo "Now building pip"
-python setup.py bdist_wheel --python-tag py2
+#!/bin/sh
+
+set -e  # Exit if error.
+
+
+DIR=`dirname "$0"`
+
+echo "Now building pip..."
+python $DIR/setup.py bdist_wheel --python-tag py2
 
 # optional
-# pip install dist/lite_tensorboard_plugin-0.0.1-py2-none-any.whl -U
+echo "Now install..."
+pip install $DIR/dist/tensorboard_lite_plugin-0.0.1-py2-none-any.whl -U

@@ -31,13 +31,15 @@ from tensorboard.plugins import base_plugin
 
 from tensorboard_lite_plugin import lite_backend
 
-_PLUGIN_PREFIX_ROUTE = 'lite'
+PLUGIN_PREFIX_ROUTE = 'lite'
+TAB_NAME = 'Lite'
+_LITE_DASHBOARD_FOLDER = 'lite_dashboard'
 
 
 class LitePlugin(base_plugin.TBPlugin):
   """A plugin that serves PR curves for individual classes."""
 
-  plugin_name = _PLUGIN_PREFIX_ROUTE
+  plugin_name = PLUGIN_PREFIX_ROUTE
 
   def __init__(self, context):
     """Instantiates a PrCurvesPlugin.
@@ -60,13 +62,19 @@ class LitePlugin(base_plugin.TBPlugin):
         '/list_saved_models': self.list_saved_models,
         '/convert': self.convert,
         '/script': self.script,
-        '/tf-lite-common.html': functools.partial(self._serve_file,
-            os.path.join('tf_lite_dashboard', 'tf-lite-common.html')),
-        '/tf-lite-controls.html': functools.partial(self._serve_file,
-            os.path.join('tf_lite_dashboard', 'tf-lite-controls.html')),
-        '/tf-lite-dashboard.html': functools.partial(self._serve_file,
-            os.path.join('tf_lite_dashboard', 'tf-lite-dashboard.html')),
+        '/index.html': functools.partial(self._serve_file,
+            os.path.join(_LITE_DASHBOARD_FOLDER, 'index.html')),
+        '/index.js': functools.partial(self._serve_file,
+            os.path.join(_LITE_DASHBOARD_FOLDER, 'index.js')),
     }
+
+  @wrappers.Request.application
+  def _serve_file(self, file_path, request):
+    """Returns a resource file."""
+    res_path = os.path.join(os.path.dirname(__file__), file_path)
+    with open(res_path, 'rb') as read_file:
+      mimetype = mimetypes.guess_type(file_path)[0]
+      return http_util.Respond(request, read_file.read(), content_type=mimetype)
 
   def is_active(self):
     """The graphs plugin is active iff any run has a graph."""
@@ -188,10 +196,9 @@ class LitePlugin(base_plugin.TBPlugin):
     supported_ops = lite_backend.get_potentially_supported_ops()
     return http_util.Respond(request, supported_ops, 'application/json')
 
-  @wrappers.Request.application
-  def _serve_file(self, file_path, request):
-    """Returns a resource file."""
-    res_path = os.path.join(os.path.dirname(__file__), file_path)
-    with open(res_path, 'rb') as read_file:
-      mimetype = mimetypes.guess_type(file_path)[0]
-      return http_util.Respond(request, read_file.read(), content_type=mimetype)
+  def frontend_metadata(self):
+    metadata = super(LitePlugin, self).frontend_metadata()
+    return metadata._replace(
+        tab_name=TAB_NAME,
+        es_module_path='/index.js',
+    )

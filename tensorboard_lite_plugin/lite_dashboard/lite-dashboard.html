@@ -17,8 +17,10 @@ limitations under the License.
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../tf-backend/tf-backend.html">
-<link rel="import" href="../tf-lite-common/tf-lite-common.html">
-<link rel="import" href="../tf-lite-controls/tf-lite-controls.html">
+<link rel="import" href="../tf-storage/tf-storage.html">
+<link rel="import" href="../tf-tensorboard/registry.html">
+<link rel="import" href="../lite-common/lite-common.html">
+<link rel="import" href="../lite-controls/lite-controls.html">
 
 <!--
 tf-graph-dashboard displays a graph from a TensorFlow run.
@@ -30,7 +32,7 @@ associated graphs) along with the url generator into tf-graph-board for display.
 If there are multiple runs with graphs, the first run's graph is shown
 by default. The user can select a different run from a dropdown menu.
 -->
-<dom-module id="tf-lite-dashboard">
+<dom-module id="lite-dashboard">
 <template>
 <paper-dialog id="error-dialog" with-backdrop></paper-dialog>
 <template is="dom-if" if="[[_datasetsEmpty(_datasets)]]">
@@ -58,28 +60,29 @@ by default. The user can select a different run from a dropdown menu.
 </template>
 <template is="dom-if" if="[[!_datasetsEmpty(_datasets)]]">
 <tf-dashboard-layout>
-  <tf-lite-controls
-        id="controls"
-        class="sidebar"
-        devices-for-stats="{{_devicesForStats}}"
-        color-by-params="[[_colorByParams]]"
-        stats="[[_stats]]"
-        color-by="{{_colorBy}}"
-        datasets="[[_datasets]]"
-        render-hierarchy="[[_renderHierarchy]]"
-        selection="{{_selection}}"
-        selected-file="{{_selectedFile}}"
-        selected-node="{{_selectedNode}}"
-        health-pills-feature-enabled="[[_debuggerDataEnabled]]"
-        health-pills-toggled-on="{{healthPillsToggledOn}}"
-  ></tf-lite-controls>
+  <lite-controls
+      id="controls"
+      class="sidebar"
+      devices-for-stats="{{_devicesForStats}}"
+      color-by-params="[[_colorByParams]]"
+      stats="[[_stats]]"
+      color-by="{{_colorBy}}"
+      datasets="[[_datasets]]"
+      render-hierarchy="[[_renderHierarchy]]"
+      selection="{{_selection}}"
+      selected-file="{{_selectedFile}}"
+      selected-node="{{_selectedNode}}"
+      health-pills-feature-enabled="[[_debuggerDataEnabled]]"
+      health-pills-toggled-on="{{healthPillsToggledOn}}"
+  ></lite-controls>
+
   <div class="center">
     <tf-graph-dashboard-loader id="loader"
         datasets="[[_datasets]]"
-        selection="[[_selection]]"
+        selection="{{_selection}}"
         selected-file="[[_selectedFile]]"
         out-graph-hierarchy="{{_graphHierarchy}}"
-        out-graph="{{_graph}}"
+        out-graph="[[_graph]]"
         out-stats="{{_stats}}"
         progress="{{_progress}}"
         hierarchy-params="[[_hierarchyParams]]"
@@ -102,19 +105,38 @@ by default. The user can select a different run from a dropdown menu.
 </tf-dashboard-layout>
 </template>
 <style>
+  tf-dashboard-layout {
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+      width: 100%;
+  }
 
   :host /deep/ {
     font-family: 'Roboto', sans-serif;
   }
 
-  .sidebar {
-    display: flex;
-    height: 100%;
-  }
-
   .center {
     position: relative;
     height: 100%;
+  }
+
+  .sidebar {
+    display: flex;
+    flex: 0 0 var(--tf-dashboard-layout-sidebar-basis, 25%);
+    height: 100%;
+    max-width: var(--tf-dashboard-layout-sidebar-max-width, 350px);
+    min-width: var(--tf-dashboard-layout-sidebar-min-width, 270px);
+    overflow-y: auto;
+    text-overflow: ellipsis;
+  }
+
+  .center {
+    flex-grow: 1;
+    flex-shrink: 1;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
   }
 
   paper-dialog {
@@ -126,9 +148,13 @@ by default. The user can select a different run from a dropdown menu.
 </dom-module>
 
 <script>
+/**
+ * The (string) name for the run of the selected dataset in the graph dashboard.
+ */
+const RUN_STORAGE_KEY = 'run';
 
 Polymer({
-  is: 'tf-lite-dashboard',
+  is: 'lite-dashboard',
   properties: {
     _datasets: Array,
     _renderHierarchy: {type: Object, observer: '_renderHierarchyChanged'},
@@ -201,17 +227,14 @@ Polymer({
       }),
   _fetchDataset() {
     return this._requestManager.request(
-        tf_backend.getRouter().pluginRoute('graphs', '/info'));
+        lite.pluginRoute(lite.GRAPHS_PLUGIN, lite.GRAPHS_INFO));
   },
   _maybeInitializeDashboard: function(isAttached) {
+    console.log("_maybeInitializeDashboard: " + isAttached);
     if (this._initialized || !isAttached) {
       // Either this dashboard is already initialized ... or we are not yet ready to initialize.
       return;
     }
-    this.set(
-      '_compatibilityProvider',
-      new tf.graph.op.TpuCompatibilityProvider()
-    );
 
     // Set this to true so we only initialize once.
     this._initialized = true;
@@ -219,12 +242,18 @@ Polymer({
       this._fetchDataset(),
       this._fetchTfLiteOps()
     ]).then(([dataset, ops]) => {
+      console.log('dataset', dataset);
+      console.log('ops: ', ops);
       const runNames = Object.keys(dataset);
+      console.log('runNames: ', runNames);
+
       // Transform raw data into UI friendly data.
-      this._datasets = runNames.sort(vz_sorting.compareTagNames).map(runName => {
+      const sortedDatasets = runNames.sort(vz_sorting.compareTagNames).map(runName => {
         const runData = dataset[runName];
 
         const tagNames = Object.keys(runData.tags).sort(vz_sorting.compareTagNames);
+        console.log('tagNames: ', tagNames);
+
         const tags = tagNames
             .map(name => runData.tags[name])
             .map(({tag, conceptual_graph, op_graph, profile}) => ({
@@ -252,15 +281,21 @@ Polymer({
 
         return {name: runName, tags: tagsWithV1Graph};
       });
+      this.set('_datasets', sortedDatasets)
+      console.log('this._datasets:', this._datasets);
+
       const defaultDataset = this._datasets[0]
-      this.set('_selection', {
+      const selection = {
         run: defaultDataset.name,
         tag: defaultDataset.tags[0].tag,
         type: 'op_graph'
-      })
+      };
+      console.log('selection:', selection);
+      this.set('_selection', selection);
+
       this.set(
         '_compatibilityProvider',
-        new tf.lite.op.TfLiteCompatibilityProvider(ops)
+        new lite.LiteCompatibilityProvider(ops)
       );
     });
   },
@@ -271,6 +306,7 @@ Polymer({
       this.set('_selectedDataset', 0);
       return;
     }
+    console.log(`_determineSelectedDataset(datasets, ${run})`);
 
     // If the URL specifies a dataset, load it.
     const dataset = datasets.findIndex(d => d.name === run);
@@ -283,13 +319,22 @@ Polymer({
       dialog.open();
       return;
     }
-
+    console.log('dataset:', dataset);
     this.set('_selectedDataset', dataset);
   },
   _updateSelectedDatasetName(datasets, selectedDataset) {
     // Cannot update `run` to update the hash in case datasets for graph is empty.
+    console.log('_updateSelectedDatasetName datasets.length:', datasets.length, 'selectedDataset:', selectedDataset);
     if (datasets.length <= selectedDataset) return;
-    this.set('run', datasets[selectedDataset].name);
+    const runName = datasets[selectedDataset].name;
+    this.set('run', runName);
+
+    this._fetchGraph(runName).then(
+      response => response.text()
+    ).then(text => {
+      console.log(text);
+      this.set('_graph', text);
+    })
   },
   _datasetsEmpty: function(datasets) {
     return !datasets || !datasets.length;
@@ -301,15 +346,24 @@ Polymer({
   },
   _fetchTfLiteOps() {
     return this._requestManager.request(
-        tf_backend.getRouter().pluginRoute('lite', '/list_supported_ops'));
+        lite.pluginRoute('lite', lite.LIST_SUPPORTED_OPS));
+  },
+  _fetchGraph(run) {
+    return this._requestManager.fetch(
+        lite.graphUrl(run));
   },
 });
 
 tf_tensorboard.registerDashboard({
   plugin: 'lite',
-  elementName: 'tf-lite-dashboard',
+  elementName: 'lite-dashboard',
   tabName: 'TF Lite',
 });
 
+console.log("After register");
+
+const component = document.createElement("lite-dashboard");
+component.id = 'lite-my-dashboard';
+document.body.appendChild(component);
 </script>
 
