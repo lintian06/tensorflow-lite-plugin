@@ -112,7 +112,7 @@ by default. The user can select a different run from a dropdown menu.
           color-by="{{_colorBy}}"
           datasets="[[_datasets]]"
           render-hierarchy="[[_renderHierarchy]]"
-          selection="{{selection}}"
+          selection="{{_selection}}"
           selected-file="{{_selectedFile}}"
           selected-node="{{_selectedNode}}"
           health-pills-feature-enabled="[[_debuggerDataEnabled]]"
@@ -124,7 +124,7 @@ by default. The user can select a different run from a dropdown menu.
       <tf-graph-dashboard-loader 
         id="loader"
           datasets="[[_datasets]]"
-          selection="[[selection]]"
+          selection="[[_selection]]"
           selected-file="[[_selectedFile]]"
           out-graph-hierarchy="{{_graphHierarchy}}"
           out-graph="{{_graph}}"
@@ -175,7 +175,7 @@ Polymer({
       type: Object,
       value: () => new tf_backend.Canceller(),
     },
-    selectedNode: {
+    _selectedNode: {
       type: String,
       notify: true,
     },
@@ -193,18 +193,10 @@ Polymer({
           }),
       observer: '_runObserver',
     },
-    selection: {
+    _selection: {
       type: Object,
     },
     _compatibilityProvider: Object,
-    graph: {
-      type: Object,
-      notify: true,
-    },
-    graph: {
-      type: Object,
-      notify: true,
-    },
     _hierarchyParams: {
       type: Object,
       value: () => tf.graph.hierarchy.DefaultHierarchyParams,
@@ -306,8 +298,8 @@ Polymer({
         tag: defaultDataset.tags[0].tag,
         type: 'op_graph'
       };
-      console.log('selection:', selection);
-      this.set('selection', selection);
+      console.log('_selection:', selection);
+      this.set('_selection', selection);
 
       this.set(
         '_compatibilityProvider',
