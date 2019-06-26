@@ -21,7 +21,7 @@ def bazel_build():
   print('Bazel build...')
   print('--- Begin ---')
   succeed = os.system("bazel build //tensorboard_lite_plugin/...") == 0
-  print('--- End ---')
+  print('--- End: %s---' % succeed)
   return succeed
 
 if not bazel_build():

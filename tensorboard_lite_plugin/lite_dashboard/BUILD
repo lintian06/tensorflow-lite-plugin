@@ -66,7 +66,7 @@ tf_web_library(
     srcs = [
         "lite-dashboard.html",
     ],
-    path = "/lite-tensorboard",
+    path = "/lite-dashboard",
     deps = [
         ":lite_common",
         ":lite_controls",
@@ -75,8 +75,9 @@ tf_web_library(
         "@org_tensorflow_tensorboard//tensorboard/components/tf_storage",
         "@org_tensorflow_tensorboard//tensorboard/components/tf_imports:polymer",
         "@org_tensorflow_tensorboard//tensorboard/components/tf_tensorboard:registry",
+        "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph",
         "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph_board",
-        "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph_loader",
+        "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph_loader:tf_graph_dashboard_loader",
     ],
 )
 
@@ -94,7 +95,7 @@ tf_web_library(
 
 tensorboard_html_binary(
     name = "index",
-    compile = True,  # Run Closure Compiler
+    compile = True,
     input_path = "/lite-index-tpl/index-tpl.html",
     output_path = "/lite-tensorboard/index.html",
     deps = [
@@ -108,7 +109,7 @@ tf_web_library(
         "index.html",
         "index.js",
     ],
-    path = "/lite-tensorboard",
+    path = "/lite-dashboard",
     deps = [
         ":lite_dashboard",
         "@org_tensorflow_tensorboard//tensorboard/components/tf_imports:webcomponentsjs",

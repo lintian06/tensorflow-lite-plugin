@@ -28,6 +28,7 @@ limitations under the License.
 <link rel="import" href="../paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../paper-tabs/paper-tabs.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../tf-dashboard-common/tensorboard-color.html">
 <link rel="import" href="../tf-graph-node-search/tf-graph-node-search.html">
@@ -69,7 +70,6 @@ paper-button {
 .allcontrols {
   padding: 0 20px 20px;
   flex-grow: 1;
-  border-right: 1px solid #ccc;
 }
 
 paper-radio-button {
@@ -353,7 +353,7 @@ tf-graph-node-search {
   </div>
 </div>
 
-<paper-dialog id="script_dialog" with-backdrop>
+<paper-dialog id="scriptDialog" with-backdrop>
   <h2>TF Lite Convert Script</h2>
   <pre><code>{{conversionScript}}</code></pre>
   <div class="buttons">
@@ -527,12 +527,12 @@ Polymer({
     this._fetchScript().then(
       result => {
         this.conversionScript = result
-        this.$.script_dialog.open()
+        this.$.scriptDialog.open()
       }
     )
   },
   convert: function () {
-    this.$.script_dialog.close()
+    this.$.scriptDialog.close()
     this._fetchRunConvert().then(
       result => {
         this.conversionResult = result
@@ -572,7 +572,7 @@ Polymer({
     const outputs = this.outputNodes.map(x => x.value);
     this._conversionResultTabSelectedIndex = 0;
     return this._requestManager.request(
-      lite.pluginRoute(lite.PLUGIN, lite.CONVERT), {
+      lite.getRouter().pluginRoute(lite.PLUGIN, lite.CONVERT), {
         data: JSON.stringify({
           input_arrays: inputs,
           output_arrays: outputs,
@@ -585,7 +585,7 @@ Polymer({
     const outputs = this.outputNodes.map(x => x.value);
     this._conversionResultTabSelectedIndex = 0;
     return this._requestManager.request(
-      lite.pluginRoute(lite.PLUGIN, lite.SCRIPT), {
+      lite.getRouter().pluginRoute(lite.PLUGIN, lite.SCRIPT), {
         data: JSON.stringify({
           input_arrays: inputs,
           output_arrays: outputs,
@@ -595,14 +595,13 @@ Polymer({
   },
   _fetchSavedModels() {
     return this._requestManager.request(
-      lite.pluginRoute(lite.PLUGIN, lite.LIST_SAVED_MODELS)
+      lite.getRouter().pluginRoute(lite.PLUGIN, lite.LIST_SAVED_MODELS)
     )
   },
   _showToast(text) {
-    // console.log('this.$.messageToast:', this.$.messageToast);
-    // this.$.messageToast.setAttribute('text', text);
-    // this.$.messageToast.open();
-    // this.$.messageToast.show(text);
+    const toast = this.$.messageToast;
+    toast.setAttribute('text', text);
+    toast.show();
   },
   _copyHtml(dom) {
     var range = document.getSelection().getRangeAt(0);

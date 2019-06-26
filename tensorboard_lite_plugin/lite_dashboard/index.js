@@ -15,9 +15,7 @@
 export function render() {
   const style = document.createElement('style');
   style.innerText = `
-html,
-body,
-iframe {
+body, html, iframe {
   border: 0;
   height: 100%;
   margin: 0;

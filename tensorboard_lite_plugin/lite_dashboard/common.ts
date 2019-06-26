@@ -13,7 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-module lite {
+namespace lite {
+
   import CompatibilityProvider = tf.graph.op.CompatibilityProvider;
   import OpNode = tf.graph.OpNode;
 
@@ -38,30 +39,17 @@ module lite {
   // Redirect: 
   export const GRAPHS_PLUGIN = 'graphs';
   export const GRAPHS_INFO = '/info';
+  export const GRAPHS_GRAPH = '/graph';
 
-  export function pluginRoute(pluginName: string, endPoint: string): string {
-    // bug: /data/plugin/lite/data/plugin/lite/list_supported_ops not found, sending 404.
-    // tf_backend.getRouter().pluginRoute(pluginName, endPoint); 
-    const url = `/data/plugin/${pluginName}${endPoint}`;
-    console.log('url: ' + url);
-    return url;
+  // The original of dynamic plugin starts with path:
+  //   http://hostname/data/plugin/lite
+  // So For dynamic plugin, it uses the relative path as follows.
+  const _router = tf_backend.createRouter("../../../data");
+  // Reset tf_backend.getRouter. 
+  // As the plugin uses separate <iframe>, it won't have side effect.
+  tf_backend.getRouter = getRouter;
+
+  export function getRouter(): tf_backend.Router {
+    return _router;
   }
-
-  export function graphUrl(run: string): string {
-    const params = new URLSearchParams();
-    params.set('run', run);
-    params.set('conceptual', String(false));
-    // if (tag) params.set('tag', tag);
-
-    // const data = Object.keys(params).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`);
-    // const query = data.join('&');
-    const url = `/data/plugin/graphs/graph?${params.toString()}`;
-    //tf_backend.getRouter().pluginRoute(
-    //    'graphs',
-    //    '/graph',
-    //    new URLSearchParams(query)
-    //);
-    console.log('url: ' + url);
-    return url;
-  }
-}
+}  // namespace lite

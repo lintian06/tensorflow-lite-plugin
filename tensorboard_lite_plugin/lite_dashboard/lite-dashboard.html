@@ -19,6 +19,9 @@ limitations under the License.
 <link rel="import" href="../tf-backend/tf-backend.html">
 <link rel="import" href="../tf-storage/tf-storage.html">
 <link rel="import" href="../tf-tensorboard/registry.html">
+<link rel="import" href="../tf-storage/tf-storage.html">
+<link rel="import" href="../tf-graph-loader/tf-graph-dashboard-loader.html">
+<link rel="import" href="../tf-graph-board/tf-graph-board.html">
 <link rel="import" href="../lite-common/lite-common.html">
 <link rel="import" href="../lite-controls/lite-controls.html">
 
@@ -34,6 +37,44 @@ by default. The user can select a different run from a dropdown menu.
 -->
 <dom-module id="lite-dashboard">
 <template>
+
+<style>
+  :host /deep/ {
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+  }
+
+  .sidebar {
+    display: flex;
+    height: 100%;
+    max-width: var(--tf-dashboard-layout-sidebar-max-width, 350px);
+    min-width: var(--tf-dashboard-layout-sidebar-min-width, 320px);
+    overflow-y: auto;
+    text-overflow: ellipsis;
+  }
+
+  .center {
+    display: flex;
+    height: 100%;
+    width: 100%;
+  }
+
+  .center tf-graph-board {
+    width: 100%;
+    height: 100%;
+  }
+
+  paper-dialog {
+    padding: 20px;
+  }
+</style>
+
 <paper-dialog id="error-dialog" with-backdrop></paper-dialog>
 <template is="dom-if" if="[[_datasetsEmpty(_datasets)]]">
   <div style="max-width: 540px; margin: 80px auto 0 auto;">
@@ -60,35 +101,40 @@ by default. The user can select a different run from a dropdown menu.
 </template>
 <template is="dom-if" if="[[!_datasetsEmpty(_datasets)]]">
 <tf-dashboard-layout>
-  <lite-controls
-      id="controls"
-      class="sidebar"
-      devices-for-stats="{{_devicesForStats}}"
-      color-by-params="[[_colorByParams]]"
-      stats="[[_stats]]"
-      color-by="{{_colorBy}}"
-      datasets="[[_datasets]]"
-      render-hierarchy="[[_renderHierarchy]]"
-      selection="{{_selection}}"
-      selected-file="{{_selectedFile}}"
-      selected-node="{{_selectedNode}}"
-      health-pills-feature-enabled="[[_debuggerDataEnabled]]"
-      health-pills-toggled-on="{{healthPillsToggledOn}}"
-  ></lite-controls>
+  <div class="container">
+    <div class="sidebar">
+      <lite-controls
+          id="controls"
+          class="sidebar"
+          devices-for-stats="{{_devicesForStats}}"
+          color-by-params="[[_colorByParams]]"
+          stats="[[_stats]]"
+          color-by="{{_colorBy}}"
+          datasets="[[_datasets]]"
+          render-hierarchy="[[_renderHierarchy]]"
+          selection="{{selection}}"
+          selected-file="{{_selectedFile}}"
+          selected-node="{{_selectedNode}}"
+          health-pills-feature-enabled="[[_debuggerDataEnabled]]"
+          health-pills-toggled-on="{{healthPillsToggledOn}}"
+      ></lite-controls>
+    </div>
 
-  <div class="center">
-    <tf-graph-dashboard-loader id="loader"
-        datasets="[[_datasets]]"
-        selection="{{_selection}}"
-        selected-file="[[_selectedFile]]"
-        out-graph-hierarchy="{{_graphHierarchy}}"
-        out-graph="[[_graph]]"
-        out-stats="{{_stats}}"
-        progress="{{_progress}}"
-        hierarchy-params="[[_hierarchyParams]]"
-        compatibility-provider="[[_compatibilityProvider]]"
-    ></tf-graph-dashboard-loader>
-    <tf-graph-board id="graphboard"
+    <div class="center">
+      <tf-graph-dashboard-loader 
+        id="loader"
+          datasets="[[_datasets]]"
+          selection="[[selection]]"
+          selected-file="[[_selectedFile]]"
+          out-graph-hierarchy="{{_graphHierarchy}}"
+          out-graph="{{_graph}}"
+          out-stats="{{_stats}}"
+          progress="{{_progress}}"
+          hierarchy-params="[[_hierarchyParams]]"
+          compatibility-provider="[[_compatibilityProvider]]"
+      ></tf-graph-dashboard-loader>
+
+      <tf-graph-board id="graphboard"
         color-by="[[_colorBy]]"
         color-by-params="{{_colorByParams}}"
         graph-hierarchy="[[_graphHierarchy]]"
@@ -98,54 +144,17 @@ by default. The user can select a different run from a dropdown menu.
         compat-node-title="TF Lite Compatibility"
         debugger-data-enabled="false"
         all-steps-mode-enabled="false"
+        stats="[[_stats]]"
         render-hierarchy="{{_renderHierarchy}}"
         selected-node="{{_selectedNode}}"
-    ></tf-graph-board>
+      ></tf-graph-board>
+    </div>
   </div>
 </tf-dashboard-layout>
 </template>
-<style>
-  tf-dashboard-layout {
-      display: flex;
-      flex-direction: row;
-      height: 100%;
-      width: 100%;
-  }
-
-  :host /deep/ {
-    font-family: 'Roboto', sans-serif;
-  }
-
-  .center {
-    position: relative;
-    height: 100%;
-  }
-
-  .sidebar {
-    display: flex;
-    flex: 0 0 var(--tf-dashboard-layout-sidebar-basis, 25%);
-    height: 100%;
-    max-width: var(--tf-dashboard-layout-sidebar-max-width, 350px);
-    min-width: var(--tf-dashboard-layout-sidebar-min-width, 270px);
-    overflow-y: auto;
-    text-overflow: ellipsis;
-  }
-
-  .center {
-    flex-grow: 1;
-    flex-shrink: 1;
-    height: 100%;
-    width: 100%;
-    overflow-y: auto;
-  }
-
-  paper-dialog {
-    padding: 20px;
-  }
-
-</style>
-</template>
 </dom-module>
+
+</template>
 
 <script>
 /**
@@ -184,10 +193,18 @@ Polymer({
           }),
       observer: '_runObserver',
     },
-    _selection: {
+    selection: {
       type: Object,
     },
     _compatibilityProvider: Object,
+    graph: {
+      type: Object,
+      notify: true,
+    },
+    graph: {
+      type: Object,
+      notify: true,
+    },
     _hierarchyParams: {
       type: Object,
       value: () => tf.graph.hierarchy.DefaultHierarchyParams,
@@ -211,7 +228,7 @@ Polymer({
     if (!this._debuggerDataEnabled) {
       // Check if the debugger plugin is enabled now.
       this._requestManager
-          .request(tf_backend.getRouter().pluginsListing())
+          .request(lite.getRouter().pluginsListing())
           .then(this._canceller.cancellable(result => {
             if (result.cancelled) {
               return;
@@ -227,7 +244,7 @@ Polymer({
       }),
   _fetchDataset() {
     return this._requestManager.request(
-        lite.pluginRoute(lite.GRAPHS_PLUGIN, lite.GRAPHS_INFO));
+      lite.getRouter().pluginRoute(lite.GRAPHS_PLUGIN, lite.GRAPHS_INFO));
   },
   _maybeInitializeDashboard: function(isAttached) {
     console.log("_maybeInitializeDashboard: " + isAttached);
@@ -252,7 +269,6 @@ Polymer({
         const runData = dataset[runName];
 
         const tagNames = Object.keys(runData.tags).sort(vz_sorting.compareTagNames);
-        console.log('tagNames: ', tagNames);
 
         const tags = tagNames
             .map(name => runData.tags[name])
@@ -291,7 +307,7 @@ Polymer({
         type: 'op_graph'
       };
       console.log('selection:', selection);
-      this.set('_selection', selection);
+      this.set('selection', selection);
 
       this.set(
         '_compatibilityProvider',
@@ -328,13 +344,6 @@ Polymer({
     if (datasets.length <= selectedDataset) return;
     const runName = datasets[selectedDataset].name;
     this.set('run', runName);
-
-    this._fetchGraph(runName).then(
-      response => response.text()
-    ).then(text => {
-      console.log(text);
-      this.set('_graph', text);
-    })
   },
   _datasetsEmpty: function(datasets) {
     return !datasets || !datasets.length;
@@ -346,24 +355,14 @@ Polymer({
   },
   _fetchTfLiteOps() {
     return this._requestManager.request(
-        lite.pluginRoute('lite', lite.LIST_SUPPORTED_OPS));
-  },
-  _fetchGraph(run) {
-    return this._requestManager.fetch(
-        lite.graphUrl(run));
+        lite.getRouter().pluginRoute('lite', lite.LIST_SUPPORTED_OPS));
   },
 });
 
-tf_tensorboard.registerDashboard({
-  plugin: 'lite',
-  elementName: 'lite-dashboard',
-  tabName: 'TF Lite',
-});
-
-console.log("After register");
-
+/*
 const component = document.createElement("lite-dashboard");
-component.id = 'lite-my-dashboard';
+component.id = 'lite-dashboard';
 document.body.appendChild(component);
+*/
 </script>
 
