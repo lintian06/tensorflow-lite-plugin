@@ -1,0 +1,8 @@
+/bazel-*
+/_bundle_srcs
+/build
+/dist
+.DS_Store
+*.pyc
+*.egg-info/
+*.swp
