@@ -65,7 +65,6 @@ http_archive(
 load("@org_tensorflow//tensorflow:workspace.bzl", "tf_workspace")
 tf_workspace()
 
-
 http_archive(
     name = "org_tensorflow_tensorboard",
     # sha256 = "ca4dff20a9ffbb6277f28087aadc8398cddba8f0f95ff2ce2b61d319a0253632",
@@ -75,8 +74,5 @@ http_archive(
     ],
 )
 
-
 load("@org_tensorflow_tensorboard//third_party:workspace.bzl", "tensorboard_workspace")
 tensorboard_workspace()
-
-# TF Lite Plugin Specific Dependencies
