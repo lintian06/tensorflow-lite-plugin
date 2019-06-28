@@ -23,13 +23,13 @@ licenses(["notice"])  # Apache 2.0
 tf_web_library(
     name = "lite_common",
     srcs = [
-        "lite-common.html",
         "common.ts",
+        "lite-common.html",
     ],
     path = "/lite-common",
     deps = [
-        "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph_common",
         "@org_tensorflow_tensorboard//tensorboard/components/tf_backend",
+        "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph_common",
     ],
 )
 
@@ -41,23 +41,23 @@ tf_web_library(
     path = "/lite-controls",
     deps = [
         ":lite_common",
-        "@org_tensorflow_tensorboard//tensorboard/components/tf_imports:polymer",
-        "@org_tensorflow_tensorboard//tensorboard/components/tf_dashboard_common",
-        "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph_node_search",
-        "@org_polymer_iron_pages",
         "@org_polymer_iron_icon",
         "@org_polymer_iron_icons",
+        "@org_polymer_iron_pages",
         "@org_polymer_paper_button",
-        "@org_polymer_paper_dropdown_menu",
         "@org_polymer_paper_dialog",
-        "@org_polymer_paper_toast",
-        "@org_polymer_paper_menu",
+        "@org_polymer_paper_dropdown_menu",
         "@org_polymer_paper_icon_button",
         "@org_polymer_paper_item",
         "@org_polymer_paper_listbox",
+        "@org_polymer_paper_menu",
         "@org_polymer_paper_radio_group",
-        "@org_polymer_paper_tooltip",
         "@org_polymer_paper_tabs",
+        "@org_polymer_paper_toast",
+        "@org_polymer_paper_tooltip",
+        "@org_tensorflow_tensorboard//tensorboard/components/tf_imports:polymer",
+        "@org_tensorflow_tensorboard//tensorboard/components/tf_dashboard_common",
+        "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph_node_search",
     ],
 )
 
@@ -72,8 +72,8 @@ tf_web_library(
         ":lite_controls",
         "@org_tensorflow_tensorboard//tensorboard/components/tf_backend",
         "@org_tensorflow_tensorboard//tensorboard/components/tf_dashboard_common",
-        "@org_tensorflow_tensorboard//tensorboard/components/tf_storage",
         "@org_tensorflow_tensorboard//tensorboard/components/tf_imports:polymer",
+        "@org_tensorflow_tensorboard//tensorboard/components/tf_storage",
         "@org_tensorflow_tensorboard//tensorboard/components/tf_tensorboard:registry",
         "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph",
         "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph_board",
@@ -88,8 +88,8 @@ tf_web_library(
     deps = [
         ":lite_dashboard",
         "@org_polymer_paper_button",
-        "@org_tensorflow_tensorboard//tensorboard/components/tf_tensorboard",
         "@org_tensorflow_tensorboard//tensorboard/components/tf_imports:webcomponentsjs",
+        "@org_tensorflow_tensorboard//tensorboard/components/tf_tensorboard",
     ],
 )
 
@@ -115,4 +115,3 @@ tf_web_library(
         "@org_tensorflow_tensorboard//tensorboard/components/tf_imports:webcomponentsjs",
     ],
 )
-

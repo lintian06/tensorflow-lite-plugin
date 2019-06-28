@@ -16,28 +16,27 @@ py_library(
     srcs = ["lite_backend.py"],
     srcs_version = "PY2AND3",
     deps = [
-        "@org_tensorflow_tensorboard//tensorboard:expect_tensorflow_installed",
         "@org_pythonhosted_six",
+        "@org_tensorflow_tensorboard//tensorboard:expect_tensorflow_installed",
     ],
 )
 
 py_library(
     name = "lite_plugin",
     srcs = ["lite_plugin.py"],
+    data = [
+        "//tensorboard_lite_plugin/lite_dashboard:assets",
+    ],
     srcs_version = "PY2AND3",
     deps = [
         ":lite_backend",
+        "@org_pocoo_werkzeug",
         "@org_tensorflow_tensorboard//tensorboard:plugin_util",
         "@org_tensorflow_tensorboard//tensorboard/backend:http_util",
         "@org_tensorflow_tensorboard//tensorboard/backend/event_processing:event_accumulator",
         "@org_tensorflow_tensorboard//tensorboard/plugins:base_plugin",
-        "@org_pocoo_werkzeug",
-    ],
-    data = [
-        "//tensorboard_lite_plugin/lite_dashboard:assets",
     ],
 )
-
 
 py_library(
     name = "lite_plugin_loader",
@@ -72,10 +71,10 @@ py_test(
         ":lite_demo_model",
         ":lite_plugin",
         ":lite_plugin_loader",
+        "@org_pocoo_werkzeug",
         "@org_tensorflow_tensorboard//tensorboard:expect_tensorflow_installed",
         "@org_tensorflow_tensorboard//tensorboard/backend:application",
         "@org_tensorflow_tensorboard//tensorboard/plugins:base_plugin",
-        "@org_pocoo_werkzeug",
     ],
 )
 
@@ -93,7 +92,6 @@ py_test(
         "@org_tensorflow_tensorboard//tensorboard/plugins:base_plugin",
     ],
 )
-
 
 py_binary(
     name = "lite_demo",
