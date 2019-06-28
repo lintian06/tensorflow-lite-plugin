@@ -91,11 +91,12 @@ with open("README.md", "r") as fh:
 REQUIRED_PACKAGES = [
   'werkzeug >= 0.11.15',
   'tensorboard >= 1.13.0',
+  'tensorflow >= 1.14.0',
 ]
 
 setuptools.setup(
   name="tensorboard-lite-plugin",
-  version="0.0.1",
+  version="0.1.0",
   author="TensorFlow Lite team",
   author_email="tflite@tensorflow.org",
   description="TF Lite Plugin for TensorBoard.",
@@ -110,7 +111,7 @@ setuptools.setup(
     ],
   },
   package_data={
-    # Must keep this in sync with tf_projector_plugin:projector_assets
+    # Must keep this in sync with assets files.
     'tensorboard_lite_plugin': [
         'lite_dashboard/index.html',
     ],

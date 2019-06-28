@@ -22,7 +22,7 @@ licenses(["notice"])  # Apache 2.0
 tf_web_library(
     name = "lite_common",
     srcs = [
-        "common.ts",
+        "common.js",
         "lite-common.html",
     ],
     path = "/lite-common",

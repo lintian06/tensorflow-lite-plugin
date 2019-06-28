@@ -24,4 +24,4 @@ python $DIR/setup.py bdist_wheel --python-tag py2
 
 # optional
 echo "Now install..."
-pip install $DIR/dist/tensorboard_lite_plugin-0.0.1-py2-none-any.whl -U
+pip install $DIR/dist/tensorboard_lite_plugin-0.1.0-py2-none-any.whl -U

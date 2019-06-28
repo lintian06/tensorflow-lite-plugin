@@ -51,8 +51,8 @@ py_test(
     name = "lite_backend_test",
     size = "medium",  # tf integration test
     srcs = ["lite_backend_test.py"],
-    srcs_version = "PY2AND3",
     python_version = "PY3",
+    srcs_version = "PY2AND3",
     deps = [
         ":lite_backend",
         ":lite_demo_model",
@@ -64,8 +64,8 @@ py_test(
     name = "lite_plugin_test",
     size = "medium",  # tf integration test
     srcs = ["lite_plugin_test.py"],
-    srcs_version = "PY2AND3",
     python_version = "PY3",
+    srcs_version = "PY2AND3",
     deps = [
         ":lite_backend",
         ":lite_demo_model",
@@ -82,8 +82,8 @@ py_test(
     name = "lite_plugin_loader_test",
     size = "small",  # tf integration test
     srcs = ["lite_plugin_loader_test.py"],
-    srcs_version = "PY2AND3",
     python_version = "PY3",
+    srcs_version = "PY2AND3",
     deps = [
         ":lite_backend",
         ":lite_plugin",
@@ -97,8 +97,8 @@ py_test(
 py_binary(
     name = "lite_demo",
     srcs = ["lite_demo.py"],
-    srcs_version = "PY2AND3",
     python_version = "PY3",
+    srcs_version = "PY2AND3",
     deps = [
         ":lite_demo_model",
         "@org_tensorflow_tensorboard//tensorboard:expect_absl_app_installed",
