@@ -1,5 +1,4 @@
-#!/bin/sh
-# Copyright 2019 The TensorFlow Authors. All Rights Reserved.
+# Copyright 2017 The TensorFlow Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,15 +12,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-
-set -e  # Exit if error.
-
-
-DIR=`dirname "$0"`
-
-echo "Now building pip..."
-python $DIR/setup.py bdist_wheel --python-tag py2
-
-# optional
-echo "Now install..."
-pip install $DIR/dist/tensorboard_lite_plugin-0.0.1-py2-none-any.whl -U
