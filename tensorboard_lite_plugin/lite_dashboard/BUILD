@@ -19,7 +19,6 @@ load("@org_tensorflow_tensorboard//tensorboard/defs:vulcanize.bzl", "tensorboard
 
 licenses(["notice"])  # Apache 2.0
 
-
 tf_web_library(
     name = "lite_common",
     srcs = [
@@ -55,8 +54,8 @@ tf_web_library(
         "@org_polymer_paper_tabs",
         "@org_polymer_paper_toast",
         "@org_polymer_paper_tooltip",
-        "@org_tensorflow_tensorboard//tensorboard/components/tf_imports:polymer",
         "@org_tensorflow_tensorboard//tensorboard/components/tf_dashboard_common",
+        "@org_tensorflow_tensorboard//tensorboard/components/tf_imports:polymer",
         "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph_node_search",
     ],
 )
