@@ -28,7 +28,7 @@ from tensorboard_lite_plugin import lite_demo_model
 class LiteBackendTest(tf.test.TestCase):
 
   def test_has_attr_is_supported(self):
-    self.assertTrue(hasattr(lite_backend, 'is_supported'))
+    self.assertTrue(hasattr(lite_backend, "is_supported"))
 
   def test_get_potentially_supported_ops(self):
     if not lite_backend.is_supported:
@@ -39,59 +39,83 @@ class LiteBackendTest(tf.test.TestCase):
     self.assertIn("Mul", result)
 
   def test_get_saved_model_dirs(self):
-    logdir = os.path.join(self.get_temp_dir(), 'logdir')
+    logdir = os.path.join(self.get_temp_dir(), "logdir")
     run_logdir = os.path.join(logdir, "0")
     model = lite_demo_model.generate_run(run_logdir)
 
-    tf.keras.experimental.export_saved_model(model, os.path.join(logdir, 'exported_saved_model'))
-    lite_backend.safe_makedirs(os.path.join(logdir, '1'))
-    lite_backend.safe_makedirs(os.path.join(logdir, '2', 'a'))
-    tf.keras.experimental.export_saved_model(model, os.path.join(logdir, '1', 'saved'))
-    tf.keras.experimental.export_saved_model(model, os.path.join(logdir, '2', 'a', 'saved'))
+    tf.keras.experimental.export_saved_model(
+        model, os.path.join(logdir, "exported_saved_model"))
+    lite_backend.safe_makedirs(os.path.join(logdir, "1"))
+    lite_backend.safe_makedirs(os.path.join(logdir, "2", "a"))
+    tf.keras.experimental.export_saved_model(model,
+                                             os.path.join(logdir, "1", "saved"))
+    tf.keras.experimental.export_saved_model(
+        model, os.path.join(logdir, "2", "a", "saved"))
 
     saved_model_dirs = lite_backend.get_saved_model_dirs(logdir)
     expected = set([
-      'exported_saved_model',
-      os.path.join('1', 'saved'),
-      os.path.join('2', 'a', 'saved'),
+        "exported_saved_model",
+        os.path.join("1", "saved"),
+        os.path.join("2", "a", "saved"),
     ])
     self.assertAllInSet(saved_model_dirs, expected)
 
   def test_script_from_saved_model(self):
     saved_model_dir = "my_dir/saved_model_folder"
-    tflite_file = 'my_tflite_model.tflite'
+    tflite_file = "my_tflite_model.tflite"
     input_arrays = ["inputs/tensor"]
     output_arrays = ["outputs/logits"]
-    template = lite_backend.script_from_saved_model(saved_model_dir, tflite_file, input_arrays, output_arrays)
+    template = lite_backend.script_from_saved_model(saved_model_dir,
+                                                    tflite_file, input_arrays,
+                                                    output_arrays)
     self.assertTrue(template)
     self.assertIn(saved_model_dir, template)
     self.assertIn(tflite_file, template)
     self.assertIn(str(input_arrays), template)
     self.assertIn(str(output_arrays), template)
 
+  def test_exists_lite_runner_bin(self):
+    self.assertTrue(lite_backend.exists_lite_runner_bin())
+
+  def test_execute_simple(self):
+    script = u"""# Run with TF in Python.
+import tensorflow as tf
+print("tf_ver: {}".format(tf.__version__))
+"""
+    success, stdout, stderr = lite_backend.execute(script, verbose=True)
+    self.assertTrue(success)
+    stdout_str = lite_backend.to_unicode(stdout)
+    self.assertTrue(stdout_str.startswith("tf_ver:"))
+
   def test_execute(self):
     if not lite_backend.is_supported:
       return  # Test conditionally.
 
-    logdir = os.path.join(self.get_temp_dir(), 'logdir')
+    logdir = os.path.join(self.get_temp_dir(), "logdir")
     run_logdir = os.path.join(logdir, "0")
     saved_model_dir = os.path.join(logdir, "0", "exported_saved_model")
     model = lite_demo_model.generate_run(logdir, saved_model_dir)
 
-    tflite_file = os.path.join(self.get_temp_dir(), 'test.tflite')
+    tflite_file = os.path.join(self.get_temp_dir(), "test.tflite")
     input_arrays = lite_demo_model.INPUT_TENSOR_ARRAYS
     output_arrays = lite_demo_model.OUTPUT_TENSOR_ARRAYS
 
     # OK case:
-    script = lite_backend.script_from_saved_model(saved_model_dir, tflite_file, input_arrays, output_arrays)
+    script = lite_backend.script_from_saved_model(saved_model_dir, tflite_file,
+                                                  input_arrays, output_arrays)
     success, stdout, stderr = lite_backend.execute(script, verbose=True)
+    print("stdout: %s" % stdout)
+    print("stderr: %s" % stderr)
     self.assertTrue(success)
     self.assertTrue(stdout)
 
     # Failed case:
     output_arrays = ["non_exited_tensor"]
-    script = lite_backend.script_from_saved_model(saved_model_dir, tflite_file, input_arrays, output_arrays)
+    script = lite_backend.script_from_saved_model(saved_model_dir, tflite_file,
+                                                  input_arrays, output_arrays)
     success, stdout, stderr = lite_backend.execute(script, verbose=True)
+    print("stdout: %s" % stdout)
+    print("stderr: %s" % stderr)
     self.assertFalse(success)
     self.assertTrue(stderr)
 
@@ -112,5 +136,5 @@ class LiteBackendTest(tf.test.TestCase):
     self.assertTrue(tips_link)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
   tf.test.main()

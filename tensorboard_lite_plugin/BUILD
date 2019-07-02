@@ -12,6 +12,9 @@ package_group(
 py_library(
     name = "lite_backend",
     srcs = ["lite_backend.py"],
+    data = [
+        ":lite_runner",
+    ],
     srcs_version = "PY2AND3",
     deps = [
         "@org_pythonhosted_six",
@@ -112,6 +115,18 @@ py_library(
     srcs = ["lite_demo_model.py"],
     srcs_version = "PY2AND3",
     deps = [
+        "@org_tensorflow_tensorboard//tensorboard:expect_numpy_installed",
+        "@org_tensorflow_tensorboard//tensorboard:expect_tensorflow_installed",
+    ],
+)
+
+py_binary(
+    name = "lite_runner",
+    srcs = ["lite_runner.py"],
+    python_version = "PY3",
+    srcs_version = "PY2AND3",
+    deps = [
+        "@org_tensorflow_tensorboard//tensorboard:expect_absl_app_installed",
         "@org_tensorflow_tensorboard//tensorboard:expect_numpy_installed",
         "@org_tensorflow_tensorboard//tensorboard:expect_tensorflow_installed",
     ],

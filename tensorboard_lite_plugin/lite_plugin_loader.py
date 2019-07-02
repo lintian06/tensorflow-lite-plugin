@@ -38,12 +38,12 @@ class LitePluginLoader(base_plugin.TBLoader):
     try:
       # pylint: disable=g-import-not-at-top,unused-import
       import tensorflow
-      from tensorboard_lite_plugin.lite_plugin import lite_backend
+      from tensorboard_lite_plugin import lite_backend
       if not lite_backend.is_supported:
       	return
     except ImportError:
       return
 
     # pylint: disable=line-too-long,g-import-not-at-top
-    from tensorboard_lite_plugin.lite_plugin import LitePlugin
-    return LitePlugin(context)
+    from tensorboard_lite_plugin import lite_plugin
+    return lite_plugin.LitePlugin(context)

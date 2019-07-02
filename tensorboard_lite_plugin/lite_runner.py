@@ -1,4 +1,3 @@
-#!/bin/bash
 # Copyright 2019 The TensorFlow Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,19 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-set -e  # Exit if error.
+"""lite runner (called in subprocess).
 
-err_report() {
-    echo "Error on line $1"
-    exit -1
-}
-trap 'err_report $LINENO' ERR
+This file builds a binary with libraries: tensorflow and numpy.
+"""
 
-DIR=`dirname "$0"`
+import sys
 
-echo "Now building pip..."
-python $DIR/setup.py bdist_wheel --python-tag py2
+from absl import app
+import numpy as np   # pylint: disable=unused-import
+import tensorflow as tf  # pylint: disable=unused-import
 
-# optional
-echo "Now install..."
-pip install $DIR/dist/tensorboard_lite_plugin-0.1.0-py2-none-any.whl -U
+
+def run(script):
+  """Run scripts in local environment."""
+  exec(script)  # pylint: disable=exec-used
+
+
+def main(_):
+  input_script = sys.stdin.read()  # Readlines until EOF.
+  run(input_script)
+
+
+if __name__ == "__main__":
+  app.run(main)

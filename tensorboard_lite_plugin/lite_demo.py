@@ -52,12 +52,12 @@ def main(_):
   print("-------------------------------------")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument(
-      '--logdir',
+      "--logdir",
       type=str,
-      default='/tmp/lite-demo',
-      help='Summaries log directory')
+      default="/tmp/lite-demo",
+      help="Summaries log directory")
   FLAGS, unparsed = parser.parse_known_args()
   app.run(main=main, argv=[sys.argv[0]] + unparsed)

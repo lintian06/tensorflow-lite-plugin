@@ -18,19 +18,17 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
-
 import numpy as np
 import tensorflow as tf
 
 
 INPUT_SHAPE = (224, 224, 3)
-INPUT_NAME = 'input_image'
-OUTPUT_NAME = 'prob'
+INPUT_NAME = "input_image"
+OUTPUT_NAME = "prob"
 
 # Tensor name used for TF Lite conversion.
-INPUT_TENSOR_ARRAYS = ['input_image']
-OUTPUT_TENSOR_ARRAYS = ['prob/Sigmoid']
+INPUT_TENSOR_ARRAYS = ["input_image"]
+OUTPUT_TENSOR_ARRAYS = ["prob/Sigmoid"]
 
 
 def generate_run(logdir, export_dir=None):
@@ -44,11 +42,11 @@ def generate_run(logdir, export_dir=None):
       tf.keras.layers.InputLayer(INPUT_SHAPE, name=INPUT_NAME),
       tf.keras.layers.Conv2D(128, 1, name="conv_2d"),
       tf.keras.layers.GlobalMaxPooling2D(name="max_pool"),
-      tf.keras.layers.Dense(1, activation='sigmoid', name=OUTPUT_NAME),
+      tf.keras.layers.Dense(1, activation="sigmoid", name=OUTPUT_NAME),
   ], name="image_classification_model")
-  model.compile('adam', 'binary_crossentropy')
+  model.compile("adam", "binary_crossentropy")
 
-  callbacks = [tf.keras.callbacks.TensorBoard(logdir,write_graph=True)]
+  callbacks = [tf.keras.callbacks.TensorBoard(logdir, write_graph=True)]
   model.fit(
       x,
       y,
@@ -57,5 +55,5 @@ def generate_run(logdir, export_dir=None):
       epochs=1,
       callbacks=callbacks)
   if export_dir:
-  	tf.keras.experimental.export_saved_model(model, export_dir)
+    tf.keras.experimental.export_saved_model(model, export_dir)
   return model

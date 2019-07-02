@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+"""lite backend library."""
 import os
 import subprocess
 
 import six
 import tensorflow as tf
+from tensorboard_lite_plugin import lite_runner
 
 
 # Checks whether dependency is met.
@@ -26,6 +28,8 @@ try:
   _get_potentially_supported_ops = _lite_v1.experimental.get_potentially_supported_ops
   _TFLiteConverter = _lite_v1.TFLiteConverter
   _gfile = tf.io.gfile.walk
+  _LITE_RUNNER_PY = os.path.abspath(lite_runner.__file__)
+  _LITE_RUNNER_BIN = os.path.splitext(_LITE_RUNNER_PY)[0]
   is_supported = True
 except AttributeError:
   pass
@@ -35,12 +39,34 @@ ISSUE_LINK = u"https://github.com/tensorflow/tensorflow/issues/new?template=40-t
 SELECT_TF_OPS_LINK = u"https://www.tensorflow.org/lite/using_select_tf_ops"
 
 
+def exists_lite_runner_bin():
+  """Returns true iff lite_runner binary exists."""
+  return os.path.exists(_LITE_RUNNER_BIN)
+
+
+def _get_executive_commands():
+  """Gets executive commands, returns a list of str."""
+  if exists_lite_runner_bin():
+    return [_LITE_RUNNER_BIN]
+  else:
+    return ["python", _LITE_RUNNER_PY]
+
+
 def to_unicode(str_bytes_or_unicode):
   """Converts string types (str, bytes, or unicode) to unicode."""
   if isinstance(str_bytes_or_unicode, six.text_type):  # Remain unicode type.
     return str_bytes_or_unicode
   elif isinstance(str_bytes_or_unicode, six.binary_type):  # Binarny to unicode.
     return str_bytes_or_unicode.decode("utf-8")
+  raise ValueError("Not supported: %s" % str_bytes_or_unicode)
+
+
+def to_bytes(str_bytes_or_unicode):
+  """Converts any type of (str, bytes, or unicode) to bytes."""
+  if isinstance(str_bytes_or_unicode, six.binary_type):  # Remain binary type.
+    return str_bytes_or_unicode
+  elif isinstance(str_bytes_or_unicode, six.text_type):  # Text to binary.
+    return str_bytes_or_unicode.encode("utf-8")
   raise ValueError("Not supported: %s" % str_bytes_or_unicode)
 
 
@@ -56,7 +82,7 @@ def get_suggestion(error_message):
       ISSUE_LINK:
           u"Please report the error to {}, or try select Tensorflow ops: {}."
           .format(ISSUE_LINK, SELECT_TF_OPS_LINK),
-      u"a Tensor which does not exist": 
+      u"a Tensor which does not exist":
           u"please check your input_arrays and output_arrays argument."
   }
   for k in suggestion_map:
@@ -93,14 +119,17 @@ with tf.io.gfile.GFile(output_file, 'wb') as f:
 
 
 def execute(script, verbose=False):
-  """Executes script from subprocess, and returns tuple(success, stdout, stderr)."""
-  cmds = ['python', '-c', script]
+  """Executes script from subprocess, and returns (success, stdout, stderr)."""
+  cmds = _get_executive_commands()
   if verbose:
-    print('Execute: %s' % cmds)
-  pipe = subprocess.Popen(cmds,
-                          stdout=subprocess.PIPE,
-                          stderr=subprocess.PIPE)
-  stdout, stderr = pipe.communicate()
+    print("Execute: {} with script:\n{}".format(cmds, script))
+  pipe = subprocess.Popen(
+      cmds,
+      stdin=subprocess.PIPE,
+      stdout=subprocess.PIPE,
+      stderr=subprocess.PIPE)
+  script_bytes = to_bytes(script)
+  stdout, stderr = pipe.communicate(input=script_bytes)
   success = (pipe.returncode == 0)
   return success, stdout, stderr
 
@@ -119,7 +148,7 @@ def get_potentially_supported_ops():
 def get_saved_model_dirs(logdir):
   """Gets a list of nested saved model dirs."""
   maybe_contains_dirs = []
-  for dirname, subdirs, files in tf.io.gfile.walk(logdir):
+  for dirname, subdirs, _ in tf.io.gfile.walk(logdir):
     relpath = os.path.relpath(dirname, logdir)
     for d in subdirs:
       subdir = os.path.normpath(os.path.join(relpath, d))
@@ -134,6 +163,6 @@ def safe_makedirs(dirpath):
     if not tf.io.gfile.exists(dirpath):
       tf.io.gfile.makedirs(dirpath)
       return True
-  except:
+  except Exception as e:  # pylint: disable=broad-except
     pass
   return False
