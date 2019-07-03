@@ -34,7 +34,7 @@ _BAZEL_PY_OUT = os.path.join("bazel-out/k8-py3-fastbuild/bin", _PLUGIN)
 
 def bazel_build():
   """Build sources with bazel."""
-  print("Bazel build...")
+  print("bazel build...")
   print("--- Begin ---")
   succeed = os.system("bazel build //tensorboard_lite_plugin/...") == 0
   print("--- End: %s---" % succeed)
