@@ -23,9 +23,15 @@ trap 'err_report $LINENO' ERR
 
 DIR=`dirname "$0"`
 
-echo "Now building pip..."
-python $DIR/setup.py bdist_wheel --python-tag py2
+PY_TAG="$1"
+if [[ "${PY_TAG}" == "" ]]; then
+  PY_TAG="py2"  # By default: build py2 package.
+fi
 
-# optional
-echo "Now install..."
-pip install $DIR/dist/tensorboard_lite_plugin-0.1.0-py2-none-any.whl -U
+build_and_install() {
+  echo "Now building pip..."
+  python $DIR/setup.py bdist_wheel --python-tag ${PY_TAG?}
+  echo "Now install..."
+  pip install $DIR/dist/tensorboard_lite_plugin-0.1.0-${PY_TAG?}-none-any.whl -U
+}
+build_and_install
