@@ -17,8 +17,6 @@ package(default_visibility = ["//tensorboard_lite_plugin:internal"])
 load("@org_tensorflow_tensorboard//tensorboard/defs:web.bzl", "tf_web_library")
 load("@org_tensorflow_tensorboard//tensorboard/defs:vulcanize.bzl", "tensorboard_html_binary")
 
-licenses(["notice"])  # Apache 2.0
-
 tf_web_library(
     name = "lite_common",
     srcs = [
@@ -74,7 +72,6 @@ tf_web_library(
         "@org_tensorflow_tensorboard//tensorboard/components/tf_imports:polymer",
         "@org_tensorflow_tensorboard//tensorboard/components/tf_storage",
         "@org_tensorflow_tensorboard//tensorboard/components/tf_tensorboard:registry",
-        "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph",
         "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph_board",
         "@org_tensorflow_tensorboard//tensorboard/plugins/graph/tf_graph_loader:tf_graph_dashboard_loader",
     ],

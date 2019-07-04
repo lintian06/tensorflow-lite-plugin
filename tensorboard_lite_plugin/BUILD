@@ -2,8 +2,6 @@
 # TensorBoard plugin for TF Lite.
 package(default_visibility = [":internal"])
 
-licenses(["notice"])  # Apache 2.0
-
 package_group(
     name = "internal",
     packages = ["//tensorboard_lite_plugin/..."],
