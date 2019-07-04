@@ -34,13 +34,12 @@ _BAZEL_PY_OUT = os.path.join("bazel-out/k8-py3-fastbuild/bin", _PLUGIN)
 
 def bazel_build(should_test=False):
   """Build sources with bazel."""
-  print("bazel build...")
-  print("--- Begin ---")
-  cmd = "bazel build ..."
+  print("--- Begin bazel ---")
+  cmd = "bazel build ..."  # Build whole package.
   if should_test:
-    cmd = cmd + " && bazel test ...:all"
+    cmd = cmd + " && bazel test ...:all"  # Test the package.
   succeed = os.system(cmd) == 0
-  print("--- End: %s---" % succeed)
+  print("--- End bazel: succeed=%s---" % succeed)
   return succeed
 
 if not bazel_build(should_test=False):

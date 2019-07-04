@@ -1,10 +1,8 @@
 # Description:
 # TensorBoard plugin for TF Lite.
-package(default_visibility = [":internal"])
-
-package_group(
-    name = "internal",
-    packages = ["//tensorboard_lite_plugin/..."],
+package(
+    default_visibility = ["//:internal"],
+    licenses = ["notice"],
 )
 
 py_library(
