@@ -15,42 +15,32 @@
 """Use bazel to build."""
 from __future__ import print_function
 
+import common
 import os
+import setuptools
 import shutil
 import sys
-
-import common
 
 
 os.chdir(common.ROOT_DIR)  # Change dir to the root folder.
 
 _BUNDLE = common.BUNDLE
 _PLUGIN = common.PLUGIN
+
 _LITE_DASHBOARD = "lite_dashboard"
 _BAZEL_BIN = "bazel-bin"
 _BAZEL_PY_OUT = os.path.join("bazel-out/k8-py3-fastbuild/bin", _PLUGIN)
-
-
-# To disable errors from com_google_protobuf/protobuf.bzl in bazel.
-_PB_NO_CHECKS = [
-    "--incompatible_disable_deprecated_attr_params=false",
-    "--incompatible_new_actions_api=false",
-    "--incompatible_depset_is_not_iterable=false",
-    "--incompatible_no_support_tools_in_action_inputs=false",
-]
 
 
 def bazel_build(should_test=False):
   """Build sources with bazel."""
   print("--- Begin bazel ---")
   cmd = ["bazel build ..."]  # Build whole package.
-  cmd += _PB_NO_CHECKS
   if should_test:
-    cmd += ["&& bazel test ...:all"] + _PB_NO_CHECKS  # Test the package.
-
-  common.run_success(cmd)
-  print("--- End bazel ---")
-  return True
+    cmd += ["&& bazel test ...:all"]  # Test the package.
+  succeed = common.run_success(cmd)
+  print("--- End bazel: succeed=%s---" % succeed)
+  return succeed
 
 
 def prepare_bundle_folder(ignore_test):
@@ -107,5 +97,5 @@ def main():
     sys.exit(common.BUILD_ERROR)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
   main()

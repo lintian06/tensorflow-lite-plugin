@@ -16,7 +16,7 @@ http_archive(
 load("@bazel_skylib//lib:versions.bzl", "versions")
 # Keep this version in sync with the BAZEL environment variable defined
 # in our .travis.yml config.
-versions.check(minimum_bazel_version = "0.22.0")
+versions.check(minimum_bazel_version = "0.26.1")
 
 http_archive(
     name = "io_bazel_rules_webtesting",
@@ -67,10 +67,10 @@ tf_workspace()
 
 http_archive(
     name = "org_tensorflow_tensorboard",
-    # sha256 = "ca4dff20a9ffbb6277f28087aadc8398cddba8f0f95ff2ce2b61d319a0253632",
-    strip_prefix = "tensorboard-lite_plugin_fix_dep2",
+    sha256 = "fc3a25c2e7553af7122b8a3a5653e0205356581188ca786431dbd3fbcfb37868",
+    strip_prefix = "tensorboard-20c79db625deb7f958e5b50536823507f1d117ad",  
     urls = [
-        "https://github.com/lintian06/tensorboard/archive/lite_plugin_fix_dep2.zip",  # Dev version.
+        "https://github.com/tensorflow/tensorboard/archive/20c79db625deb7f958e5b50536823507f1d117ad.tar.gz",  # 2019-07-09
     ],
 )
 

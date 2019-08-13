@@ -42,6 +42,7 @@ setuptools.setup(
     url="https://github.com/tensorflow/tensorboard_lite_plugin",
     packages=setuptools.find_packages(where=common.BUNDLE),
     package_dir={"": common.BUNDLE},
+    license="Apache 2.0",
     entry_points={
         "tensorboard_plugins": [
             "lite=tensorboard_lite_plugin.lite_plugin:LitePlugin",
@@ -60,7 +61,7 @@ setuptools.setup(
     classifiers=[
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache Software License :: 2.0",
         "Operating System :: OS Independent",
     ],
 )
