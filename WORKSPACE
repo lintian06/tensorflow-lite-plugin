@@ -68,7 +68,7 @@ tf_workspace()
 http_archive(
     name = "org_tensorflow_tensorboard",
     sha256 = "fc3a25c2e7553af7122b8a3a5653e0205356581188ca786431dbd3fbcfb37868",
-    strip_prefix = "tensorboard-20c79db625deb7f958e5b50536823507f1d117ad",  
+    strip_prefix = "tensorboard-20c79db625deb7f958e5b50536823507f1d117ad",
     urls = [
         "https://github.com/tensorflow/tensorboard/archive/20c79db625deb7f958e5b50536823507f1d117ad.tar.gz",  # 2019-07-09
     ],
