@@ -1,4 +1,2 @@
 include LICENSE
 include README.md
-include _bundle_srcs/tensorboard_lite_plugin/lite_dashboard/*
-include _bundle_srcs/tensorboard_lite_plugin/images/*

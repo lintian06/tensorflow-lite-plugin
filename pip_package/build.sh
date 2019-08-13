@@ -13,25 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+# Run this to build the pip package.
+# 
+# $ sh build.sh
+
 set -e  # Exit if error.
 
-err_report() {
-    echo "Error on line $1"
-    exit -1
-}
-trap 'err_report $LINENO' ERR
-
-DIR=`dirname "$0"`
-
-PY_TAG="$1"
-if [[ "${PY_TAG}" == "" ]]; then
-  PY_TAG="py2"  # By default: build py2 package.
-fi
-
-build_and_install() {
-  echo "Now building pip..."
-  python $DIR/setup.py bdist_wheel --python-tag ${PY_TAG?}
-  echo "Now install..."
-  pip install $DIR/dist/tensorboard_lite_plugin-0.1.0-${PY_TAG?}-none-any.whl -U
-}
-build_and_install
+PIP_DIR=`dirname "$0"`
+python ${PIP_DIR?}/build.py $@
