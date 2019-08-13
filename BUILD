@@ -10,4 +10,4 @@ package_group(
     packages = ["//..."],
 )
 
-exports_files(["LICENSE"])  # Apache 2.0
+exports_files(["LICENSE"])
