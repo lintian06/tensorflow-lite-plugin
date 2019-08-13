@@ -25,6 +25,8 @@ PIP_DIR = os.path.abspath(os.path.dirname(__file__))  # pip_package folder.
 ROOT_DIR = os.path.dirname(PIP_DIR)  # Root folder.
 BUNDLE = "_bundle_srcs"  # Build target for bundle folder.
 
+BUILD_DIR = "_build"  # Custom build folder to avoid conflicts with BUILD.
+
 PLUGIN = "tensorboard_lite_plugin"  # Plugin subfolder under root.
 
 PLUGIN_NAME = "tensorboard-lite-plugin"  # Plugin name.

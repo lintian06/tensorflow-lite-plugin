@@ -1,6 +1,7 @@
 /bazel-*
 /_bundle_srcs
 /build
+/_build
 /dist
 __pycache__
 .DS_Store

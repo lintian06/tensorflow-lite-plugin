@@ -37,6 +37,7 @@ def main(args):
     # Setup pip package.
     cmd = [
         "python {pip_dir}/setup.py".format(pip_dir=common.PIP_DIR),
+        "build -b {build_dir}".format(build_dir=common.BUILD_DIR),
         "bdist_wheel",
         "--python-tag {python_tag}".format(python_tag=args.python_tag),
     ]
