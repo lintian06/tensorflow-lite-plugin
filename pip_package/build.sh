@@ -14,7 +14,7 @@
 # limitations under the License.
 # ==============================================================================
 # Run this to build the pip package.
-# 
+#
 # $ sh build.sh
 
 set -e  # Exit if error.

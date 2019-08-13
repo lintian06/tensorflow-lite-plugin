@@ -13,8 +13,11 @@
 # limitations under the License.
 # ==============================================================================
 """Common constants for setup."""
+from __future__ import print_function
 
 import os
+import sys
+
 
 BUILD_ERROR = -1  # Error code
 
@@ -26,3 +29,15 @@ PLUGIN = "tensorboard_lite_plugin"  # Plugin subfolder under root.
 
 PLUGIN_NAME = "tensorboard-lite-plugin"  # Plugin name.
 VERSION = "0.1.0"
+
+
+def run_success(cmd):
+  """Runs cmd, and asserts whether it is succeed."""
+  if isinstance(cmd, (list, tuple)):
+    cmd = " ".join(cmd)
+
+  print("Run: {}".format(cmd))
+  if os.system(cmd) != 0:
+    print("Failed with: {}".format(cmd))
+    sys.exit(BUILD_ERROR)
+  return True

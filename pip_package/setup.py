@@ -13,8 +13,9 @@
 # limitations under the License.
 # ==============================================================================
 """setup for pip package."""
-import common
 import os
+
+import common
 import setuptools
 
 
@@ -22,7 +23,9 @@ with open(os.path.join(common.ROOT_DIR, "README.md"), "r") as fh:
   long_description = fh.read()
 
 with open(os.path.join(common.ROOT_DIR, "requirements.txt"), "r") as fh:
-  required_packages = fh.read().splitlines()
+  # Filter empty or comments.
+  valid_package = lambda l: l and not l.startswith("#")
+  required_packages = [l for l in fh.read().splitlines() if valid_package(l)]
 
 
 setuptools.setup(
@@ -44,9 +47,9 @@ setuptools.setup(
     package_data={
         # Must keep this in sync with assets files.
         "tensorboard_lite_plugin": [
-          "lite_dashboard/index.html",
-          "lite_dashboard/index.js",
-          "images/lite_intro.png",
+            "lite_dashboard/index.html",
+            "lite_dashboard/index.js",
+            "images/lite_intro.png",
         ],
     },
     include_package_data=True,

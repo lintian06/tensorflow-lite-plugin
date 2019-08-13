@@ -15,19 +15,21 @@
 """Use bazel to build."""
 from __future__ import print_function
 
-import common
 import os
-import setuptools
 import shutil
 import sys
+
+import common
 
 
 os.chdir(common.ROOT_DIR)  # Change dir to the root folder.
 
-_BUNLDE = common.BUNLDE
+_BUNDLE = common.BUNDLE
+_PLUGIN = common.PLUGIN
 _LITE_DASHBOARD = "lite_dashboard"
 _BAZEL_BIN = "bazel-bin"
-_BAZEL_PY_OUT = os.path.join("bazel-out/k8-py3-fastbuild/bin", PLUGIN)
+_BAZEL_PY_OUT = os.path.join("bazel-out/k8-py3-fastbuild/bin", _PLUGIN)
+
 
 # To disable errors from com_google_protobuf/protobuf.bzl in bazel.
 _PB_NO_CHECKS = [
@@ -37,6 +39,7 @@ _PB_NO_CHECKS = [
     "--incompatible_no_support_tools_in_action_inputs=false",
 ]
 
+
 def bazel_build(should_test=False):
   """Build sources with bazel."""
   print("--- Begin bazel ---")
@@ -44,10 +47,10 @@ def bazel_build(should_test=False):
   cmd += _PB_NO_CHECKS
   if should_test:
     cmd += ["&& bazel test ...:all"] + _PB_NO_CHECKS  # Test the package.
-  cmd = " ".join(cmd)
-  succeed = os.system(cmd) == 0
-  print("--- End bazel: succeed=%s---" % succeed)
-  return succeed
+
+  common.run_success(cmd)
+  print("--- End bazel ---")
+  return True
 
 
 def prepare_bundle_folder(ignore_test):
@@ -63,26 +66,26 @@ def prepare_bundle_folder(ignore_test):
     os.makedirs(_BUNDLE)
 
     # Prepare py files.
-    plugin_out = os.path.join(_BUNDLE, PLUGIN)
+    plugin_out = os.path.join(_BUNDLE, _PLUGIN)
     ignore = ["BUILD", _LITE_DASHBOARD]
     if ignore_test:
       ignore += ["*_test.py"]
-    print("Copy tree %s to %s with some ignored." % (PLUGIN, plugin_out))
-    shutil.copytree(PLUGIN, plugin_out, ignore=shutil.ignore_patterns(*ignore))
+    print("Copy tree %s to %s with some ignored." % (_PLUGIN, plugin_out))
+    shutil.copytree(_PLUGIN, plugin_out, ignore=shutil.ignore_patterns(*ignore))
 
     # Prepare compiled html folder and files.
-    os.makedirs(os.path.join(_BUNDLE, PLUGIN, _LITE_DASHBOARD))
+    os.makedirs(os.path.join(_BUNDLE, _PLUGIN, _LITE_DASHBOARD))
 
     copy_pairs = [
         # index.html
         (
-            os.path.join(_BAZEL_BIN, PLUGIN, _LITE_DASHBOARD, "index.html"),
-            os.path.join(_BUNDLE, PLUGIN, _LITE_DASHBOARD, "index.html"),
+            os.path.join(_BAZEL_BIN, _PLUGIN, _LITE_DASHBOARD, "index.html"),
+            os.path.join(_BUNDLE, _PLUGIN, _LITE_DASHBOARD, "index.html"),
         ),
         # index.js
         (
-            os.path.join(PLUGIN, _LITE_DASHBOARD, "index.js"),
-            os.path.join(_BUNDLE, PLUGIN, _LITE_DASHBOARD, "index.js"),
+            os.path.join(_PLUGIN, _LITE_DASHBOARD, "index.js"),
+            os.path.join(_BUNDLE, _PLUGIN, _LITE_DASHBOARD, "index.js"),
         ),
     ]
     for file_in, file_out in copy_pairs:
@@ -104,5 +107,5 @@ def main():
     sys.exit(common.BUILD_ERROR)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
   main()

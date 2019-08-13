@@ -2,6 +2,7 @@
 /_bundle_srcs
 /build
 /dist
+__pycache__
 .DS_Store
 *.pyc
 *.egg-info/
