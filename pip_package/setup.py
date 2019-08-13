@@ -19,10 +19,13 @@ import common
 import setuptools
 
 
-with open(os.path.join(common.ROOT_DIR, "README.md"), "r") as fh:
+os.chdir(common.ROOT_DIR)   # Change dir to the root folder.
+
+
+with open("README.md", "r") as fh:
   long_description = fh.read()
 
-with open(os.path.join(common.ROOT_DIR, "requirements.txt"), "r") as fh:
+with open("requirements.txt", "r") as fh:
   # Filter empty or comments.
   valid_package = lambda l: l and not l.startswith("#")
   required_packages = [l for l in fh.read().splitlines() if valid_package(l)]

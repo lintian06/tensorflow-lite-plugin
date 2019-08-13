@@ -27,6 +27,13 @@ def main(args):
     common.run_success(cmd)
 
   elif args.mode == "install":
+    # Bazel build.
+    cmd = [
+        "python {pip_dir}/bazel_build.py".format(pip_dir=common.PIP_DIR),
+    ]
+    print("Now building binary from source....")
+    common.run_success(cmd)
+
     # Setup pip package.
     cmd = [
         "python {pip_dir}/setup.py".format(pip_dir=common.PIP_DIR),

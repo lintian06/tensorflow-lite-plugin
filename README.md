@@ -24,8 +24,13 @@ Features:
 ```
 # Clone this repo.
 git clone https://github.com/lintian06/tensorflow-lite-plugin
+cd tensorflow-lite-plugin
+
+# Install requirements
+pip install -r requirements.txt
+
 # Build and install tensorflow-lite-plugin.
-sh tensorflow-lite-plugin/build.sh
+sh pip_package/build.sh
 
 # Optional: Generate demo folder to /tmp/lite-demo
 python -m tensorboard_lite_plugin.lite_demo
@@ -44,5 +49,7 @@ You will see a prompted URL. Open the link with your web browser.
 # Clone tensorboard with specific development snapshot.
 git clone https://github.com/lintian06/tensorboard -b lite_plugin_fix_dep2
 cd tensorboard
+
+# Run tensorboard.
 bazel run //tensorboard -- --logdir=/tmp/lite-demo
 ```
