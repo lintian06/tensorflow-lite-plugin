@@ -56,8 +56,8 @@ class LitePluginTest(tf.test.TestCase):
     context = base_plugin.TBContext(logdir=logdir, multiplexer=multiplexer)
 
     self.plugin = lite_plugin.LitePlugin(context)
-    wsgi_app = application.TensorBoardWSGIApp(
-        logdir, [self.plugin], multiplexer, reload_interval=-1, path_prefix="")
+    # TODO(tensorflow/tensorboard#2573): Remove TensorBoardWSGI wrapper.
+    wsgi_app = application.TensorBoardWSGI([self.plugin])
     self.server = werkzeug_test.Client(wsgi_app, wrappers.BaseResponse)
 
     self.routes = self.plugin.get_plugin_apps()
